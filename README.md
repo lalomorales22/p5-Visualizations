@@ -66,6 +66,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-Lalo Morales - [@your_twitter](https://twitter.com/your_twitter) - your.email@example.com
+Lalo Morales - [@lalopenguin]([https://x.com/lalopenguin]) - laloadrianmorales@gmail.com
 
 Project Link: [https://github.com/lalomorales22/p5-Visualizations](https://github.com/lalomorales22/p5-Visualizations)
