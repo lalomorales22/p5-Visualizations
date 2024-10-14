@@ -1,7 +1,8 @@
 # Extreme Wave Visualization
 
-![Extreme Wave Visualization](![j5vis](https://github.com/user-attachments/assets/dd0b1008-fcc1-43db-ab2d-422a3593bc79)
-)
+![Extreme Wave Visualization]
+![j5vis](https://github.com/user-attachments/assets/16a2742f-805c-4276-9e13-d35fdbe8262f)
+
 
 ## [Live Demo](https://youtu.be/6XrFeX3iCzw)
 
