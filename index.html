@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extreme Wave Visualization</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
+    <style>
+        body { margin: 0; padding: 0; overflow: hidden; font-family: Arial, sans-serif; }
+        #controls { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.8); padding: 10px; max-height: 90vh; overflow-y: auto; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        details { margin-bottom: 10px; }
+        summary { cursor: pointer; font-weight: bold; padding: 5px; background-color: #f0f0f0; border-radius: 3px; }
+        details[open] summary { margin-bottom: 10px; }
+        label { display: inline-block; width: 150px; }
+        input[type="range"], select { width: 200px; }
+        input[type="color"] { width: 50px; }
+        button { margin: 5px; padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    <div id="controls">
+        <h2>Extreme Wave Visualization Controls</h2>
+        
+        <details>
+            <summary>Wave Properties</summary>
+            <label for="wavePattern">Wave Pattern:</label>
+            <select id="wavePattern">
+                <option value="sine">Sine</option>
+                <option value="square">Square</option>
+                <option value="sawtooth">Sawtooth</option>
+                <option value="triangle">Triangle</option>
+                <option value="noise">Noise</option>
+                <option value="custom">Custom Function</option>
+            </select><br>
+            <label for="customWaveFunction">Custom Wave Function:</label>
+            <input type="text" id="customWaveFunction" placeholder="e.g., Math.sin(x) + Math.cos(x*2)"><br>
+            <label for="speed">Speed:</label>
+            <input type="range" id="speed" min="0" max="0.5" step="0.001" value="0.02"><br>
+            <label for="frequency">Frequency:</label>
+            <input type="range" id="frequency" min="0" max="0.5" step="0.001" value="0.01"><br>
+            <label for="numLines">Number of Lines:</label>
+            <input type="range" id="numLines" min="1" max="200" step="1" value="10"><br>
+            <label for="amplitude">Amplitude:</label>
+            <input type="range" id="amplitude" min="0" max="300" step="1" value="50"><br>
+            <label for="lineWidth">Line Width:</label>
+            <input type="range" id="lineWidth" min="0.1" max="10" step="0.1" value="2"><br>
+            <label for="waveTurbulence">Wave Turbulence:</label>
+            <input type="range" id="waveTurbulence" min="0" max="0.1" step="0.001" value="0"><br>
+        </details>
+
+        <details>
+            <summary>Color and Blending</summary>
+            <label for="colorScheme">Color Scheme:</label>
+            <select id="colorScheme">
+                <option value="rainbow">Rainbow</option>
+                <option value="custom">Custom</option>
+                <option value="gradient">Gradient</option>
+                <option value="palette">Color Palette</option>
+            </select><br>
+            <label for="customColor">Custom Color:</label>
+            <input type="color" id="customColor" value="#FFFFFF"><br>
+            <label for="gradientStart">Gradient Start:</label>
+            <input type="color" id="gradientStart" value="#FF0000"><br>
+            <label for="gradientEnd">Gradient End:</label>
+            <input type="color" id="gradientEnd" value="#0000FF"><br>
+            <label for="backgroundColor">Background Color:</label>
+            <input type="color" id="backgroundColor" value="#000000"><br>
+            <label for="blendMode">Blend Mode:</label>
+            <select id="blendMode">
+                <option value="normal">Normal</option>
+                <option value="multiply">Multiply</option>
+                <option value="screen">Screen</option>
+                <option value="overlay">Overlay</option>
+                <option value="darken">Darken</option>
+                <option value="lighten">Lighten</option>
+                <option value="color-dodge">Color Dodge</option>
+                <option value="color-burn">Color Burn</option>
+            </select><br>
+            <label for="fadeEffect">Fade Effect:</label>
+            <input type="range" id="fadeEffect" min="0" max="1" step="0.01" value="0.1"><br>
+        </details>
+
+        <details>
+            <summary>Particles</summary>
+            <label for="particleCount">Particle Count:</label>
+            <input type="range" id="particleCount" min="0" max="2000" step="10" value="100"><br>
+            <label for="particleSize">Particle Size:</label>
+            <input type="range" id="particleSize" min="1" max="20" step="0.5" value="4"><br>
+            <label for="particleShape">Particle Shape:</label>
+            <select id="particleShape">
+                <option value="circle">Circle</option>
+                <option value="square">Square</option>
+                <option value="triangle">Triangle</option>
+                <option value="star">Star</option>
+                <option value="image">Custom Image</option>
+            </select><br>
+            <label for="particleImage">Custom Particle Image URL:</label>
+            <input type="text" id="particleImage" placeholder="https://example.com/particle.png"><br>
+            <label for="particleBehavior">Particle Behavior:</label>
+            <select id="particleBehavior">
+                <option value="default">Default</option>
+                <option value="flock">Flocking</option>
+                <option value="followPath">Follow Path</option>
+                <option value="audioReactive">Audio Reactive</option>
+                <option value="gravity">Gravity</option>
+                <option value="explosion">Explosion</option>
+            </select><br>
+        </details>
+
+        <details>
+            <summary>Interaction and Effects</summary>
+            <label for="interactionMode">Interaction Mode:</label>
+            <select id="interactionMode">
+                <option value="none">None</option>
+                <option value="attract">Attract</option>
+                <option value="repel">Repel</option>
+                <option value="swirl">Swirl</option>
+                <option value="distort">Distort</option>
+            </select><br>
+            <label for="interactionStrength">Interaction Strength:</label>
+            <input type="range" id="interactionStrength" min="0" max="200" step="1" value="50"><br>
+            <label for="rotationSpeed">Rotation Speed:</label>
+            <input type="range" id="rotationSpeed" min="-0.1" max="0.1" step="0.001" value="0"><br>
+            <label for="zoomSpeed">Zoom Speed:</label>
+            <input type="range" id="zoomSpeed" min="-0.1" max="0.1" step="0.001" value="0"><br>
+            <label for="symmetry">Symmetry:</label>
+            <input type="range" id="symmetry" min="1" max="12" step="1" value="1"><br>
+            <label for="is3DEffect">3D Effect:</label>
+            <input type="checkbox" id="is3DEffect"><br>
+            <label for="isPolarCoordinates">Polar Coordinates:</label>
+            <input type="checkbox" id="isPolarCoordinates"><br>
+            <label for="fractalDepth">Fractal Depth:</label>
+            <input type="range" id="fractalDepth" min="0" max="5" step="1" value="0"><br>
+        </details>
+
+        <details>
+            <summary>Audio</summary>
+            <label for="audioEnabled">Audio Enabled:</label>
+            <input type="checkbox" id="audioEnabled"><br>
+            <label for="audioSensitivity">Audio Sensitivity:</label>
+            <input type="range" id="audioSensitivity" min="0" max="5" step="0.1" value="1"><br>
+            <label for="audioFrequencyRange">Audio Frequency Range:</label>
+            <select id="audioFrequencyRange">
+                <option value="all">All</option>
+                <option value="bass">Bass</option>
+                <option value="mid">Mid</option>
+                <option value="treble">Treble</option>
+            </select><br>
+        </details>
+
+        <details>
+            <summary>Advanced Wave Modifiers</summary>
+            <label for="harmonics">Harmonics:</label>
+            <input type="range" id="harmonics" min="0" max="10" step="1" value="0"><br>
+            <label for="waveCombo">Wave Combination:</label>
+            <select id="waveCombo">
+                <option value="single">Single</option>
+                <option value="additive">Additive</option>
+                <option value="multiplicative">Multiplicative</option>
+                <option value="modulation">Modulation</option>
+            </select><br>
+            <label for="waveReflection">Wave Reflection:</label>
+            <input type="checkbox" id="waveReflection"><br>
+            <label for="waveDistortion">Wave Distortion:</label>
+            <input type="range" id="waveDistortion" min="0" max="1" step="0.01" value="0"><br>
+        </details>
+
+        <details>
+            <summary>Color Palette</summary>
+            <div id="colorPalette">
+                <!-- Color inputs will be dynamically added here -->
+            </div>
+            <button id="addColor">Add Color</button>
+            <button id="removeColor">Remove Color</button>
+        </details>
+
+        <details>
+            <summary>Presets and Export</summary>
+            <label for="presetSelector">Preset:</label>
+            <select id="presetSelector"></select>
+            <button id="savePreset">Save Preset</button><br>
+            <button id="randomize">Randomize All</button>
+            <button id="exportImage">Export Image</button>
+            <button id="exportAnimation">Export Animation</button>
+        </details>
+    </div>
+
+    <script src="sketch.js"></script>
+    <script>
+        // Add this script to dynamically manage color palette inputs
+        const colorPalette = document.getElementById('colorPalette');
+        const addColorBtn = document.getElementById('addColor');
+        const removeColorBtn = document.getElementById('removeColor');
+
+        function addColorInput() {
+            const input = document.createElement('input');
+            input.type = 'color';
+            input.className = 'paletteColor';
+            input.value = '#' + Math.floor(Math.random()*16777215).toString(16);
+            colorPalette.appendChild(input);
+            input.addEventListener('input', updateColorPalette);
+        }
+
+        function removeColorInput() {
+            if (colorPalette.children.length > 1) {
+                colorPalette.removeChild(colorPalette.lastChild);
+                updateColorPalette();
+            }
+        }
+
+        function updateColorPalette() {
+            const colors = Array.from(colorPalette.children).map(input => input.value);
+            if (window.config) {
+                window.config.colorPalette = colors;
+            }
+        }
+
+        addColorBtn.addEventListener('click', addColorInput);
+        removeColorBtn.addEventListener('click', removeColorInput);
+
+        // Initialize with some default colors
+        for (let i = 0; i < 6; i++) {
+            addColorInput();
+        }
+    </script>
+</body>
+</html>
